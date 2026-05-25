@@ -16,7 +16,7 @@ let mixer;
 const loader = new GLTFLoader();
 
 // FIX: Changed '/ulysses_butterfly.glb' to './ulysses_butterfly.glb'
-loader.load('./ulysses_butterfly.glb',
+loader.load('/ulysses_butterfly.glb',
     function (gltf) {
         butterfly = gltf.scene;
         scene.add(butterfly);
