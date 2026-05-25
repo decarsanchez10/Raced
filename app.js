@@ -14,7 +14,9 @@ const scene = new THREE.Scene();
 let butterfly;
 let mixer;
 const loader = new GLTFLoader();
-loader.load('/ulysses_butterfly.glb',
+
+// FIX: Changed '/ulysses_butterfly.glb' to './ulysses_butterfly.glb'
+loader.load('./ulysses_butterfly.glb',
     function (gltf) {
         butterfly = gltf.scene;
         scene.add(butterfly);
@@ -23,13 +25,17 @@ loader.load('/ulysses_butterfly.glb',
         mixer.clipAction(gltf.animations[0]).play();
         modelMove();
     },
-    function (xhr) {},
-    function (error) {}
+    function (xhr) {
+        console.log((xhr.loaded / xhr.total * 100) + '% loaded');
+    },
+    function (error) {
+        console.error('An error occurred loading the model:', error);
+    }
 );
+
 const renderer = new THREE.WebGLRenderer({alpha: true});
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.getElementById('container3D').appendChild(renderer.domElement);
-
 
 const ambientLight = new THREE.AmbientLight(0xffffff, 1.3);
 scene.add(ambientLight);
@@ -37,7 +43,6 @@ scene.add(ambientLight);
 const topLight = new THREE.DirectionalLight(0xffffff, 1);
 topLight.position.set(500, 500, 500);
 scene.add(topLight);
-
 
 const reRender3D = () => {
     requestAnimationFrame(reRender3D);
@@ -47,40 +52,14 @@ const reRender3D = () => {
 reRender3D();
 
 let arrPositionModel = [
-    {
-        id: 'banner',
-        position: {x: 0, y: -1, z: 0},
-        rotation: {x: 0, y: 1.5, z: 0}
-    },
-    {
-        id: "intro",
-        position: { x: 1, y: -1, z: -5 },
-        rotation: { x: 0.5, y: -0.5, z: 0 },
-    },
-    {
-        id: "description",
-        position: { x: -1, y: -1, z: -5 },
-        rotation: { x: 0, y: 0.5, z: 0 },
-
-    },
-    {
-         id: "section",
-        position: { x: 0.8, y: -1, z: -5 },
-        rotation: { x: 0.3, y: -0.5, z: 0 },
-    },
-    {
-        id: "section2",
-        position: { x: -1, y: -1, z: -4 },
-        rotation: { x: 0, y: 0.5, z: 0 },
-       
-    },
-    {
-   
-        id: "contact",
-        position: { x: 0.8, y: -1, z: 0 },
-        rotation: { x: 0.3, y: -0.5, z: 0 },
-    },
+    { id: 'banner', position: {x: 0, y: -1, z: 0}, rotation: {x: 0, y: 1.5, z: 0} },
+    { id: "intro", position: { x: 1, y: -1, z: -5 }, rotation: { x: 0.5, y: -0.5, z: 0 } },
+    { id: "description", position: { x: -1, y: -1, z: -5 }, rotation: { x: 0, y: 0.5, z: 0 } },
+    { id: "section", position: { x: 0.8, y: -1, z: -5 }, rotation: { x: 0.3, y: -0.5, z: 0 } },
+    { id: "section2", position: { x: -1, y: -1, z: -4 }, rotation: { x: 0, y: 0.5, z: 0 } },
+    { id: "contact", position: { x: 0.8, y: -1, z: 0 }, rotation: { x: 0.3, y: -0.5, z: 0 } },
 ];
+
 const modelMove = () => {
     const sections = document.querySelectorAll('.section');
     let currentSection;
@@ -90,9 +69,7 @@ const modelMove = () => {
             currentSection = section.id;
         }
     });
-    let position_active = arrPositionModel.findIndex(
-        (val) => val.id == currentSection
-    );
+    let position_active = arrPositionModel.findIndex((val) => val.id == currentSection);
     if (position_active >= 0) {
         let new_coordinates = arrPositionModel[position_active];
         gsap.to(butterfly.position, {
@@ -102,7 +79,6 @@ const modelMove = () => {
             duration: 3,
             ease: "power1.out"
         });
-       
         gsap.to(butterfly.rotation, {
             x: new_coordinates.rotation.x,
             y: new_coordinates.rotation.y,
@@ -112,11 +88,11 @@ const modelMove = () => {
         })
     }
 }
+
 window.addEventListener('scroll', () => {
-    if (butterfly) {
-        modelMove();
-    }
+    if (butterfly) modelMove();
 })
+
 window.addEventListener('resize', () => {
     renderer.setSize(window.innerWidth, window.innerHeight);
     camera.aspect = window.innerWidth / window.innerHeight;
