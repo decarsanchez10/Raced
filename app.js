@@ -16,24 +16,25 @@ let mixer;
 const loader = new GLTFLoader();
 
 loader.load('/ulysses_butterfly.glb',
-    function (gltf) {
+    (gltf) => {
         butterfly = gltf.scene;
         scene.add(butterfly);
         mixer = new THREE.AnimationMixer(butterfly);
-        mixer.clipAction(gltf.animations[0]).play();
+        if (gltf.animations.length > 0) {
+            mixer.clipAction(gltf.animations[0]).play();
+        }
         modelMove();
     },
-    function (xhr) {
-        // Check if lengthComputable is true to avoid dividing by zero
+    (xhr) => {
+        // Prevent division by zero if total is 0
         if (xhr.lengthComputable) {
             console.log((xhr.loaded / xhr.total * 100) + '% loaded');
         } else {
-            console.log('Loading...');
+            console.log('Loading: ' + xhr.loaded + ' bytes');
         }
     },
-    function (error) {
-        // Access the underlying XMLHttpRequest to see the status code
-        console.error('An error occurred loading the model. Status:', error.target.status);
+    (error) => {
+        console.error('An error occurred loading the model:', error);
     }
 );
 const renderer = new THREE.WebGLRenderer({alpha: true});
