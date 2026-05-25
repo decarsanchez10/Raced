@@ -15,28 +15,24 @@ let butterfly;
 let mixer;
 const loader = new GLTFLoader();
 
-loader.load('/ulysses_butterfly.glb',
-    (gltf) => {
+// FIX: Changed '/ulysses_butterfly.glb' to './ulysses_butterfly.glb'
+loader.load('./ulysses_butterfly.glb',
+    function (gltf) {
         butterfly = gltf.scene;
         scene.add(butterfly);
+
         mixer = new THREE.AnimationMixer(butterfly);
-        if (gltf.animations.length > 0) {
-            mixer.clipAction(gltf.animations[0]).play();
-        }
+        mixer.clipAction(gltf.animations[0]).play();
         modelMove();
     },
-    (xhr) => {
-        // Prevent division by zero if total is 0
-        if (xhr.lengthComputable) {
-            console.log((xhr.loaded / xhr.total * 100) + '% loaded');
-        } else {
-            console.log('Loading: ' + xhr.loaded + ' bytes');
-        }
+    function (xhr) {
+        console.log((xhr.loaded / xhr.total * 100) + '% loaded');
     },
-    (error) => {
+    function (error) {
         console.error('An error occurred loading the model:', error);
     }
 );
+
 const renderer = new THREE.WebGLRenderer({alpha: true});
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.getElementById('container3D').appendChild(renderer.domElement);
